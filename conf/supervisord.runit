@@ -1,0 +1,4 @@
+#!/bin/sh -e
+unlink /opt/publisher/run/supervisor.sock 2>/dev/null || true
+exec 2>&1
+exec supervisord --nodaemon --configuration /opt/publisher/conf/supervisord.conf

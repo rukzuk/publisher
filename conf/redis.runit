@@ -1,0 +1,3 @@
+#!/bin/sh -e
+exec 2>&1
+exec /usr/bin/redis-server /etc/redis/redis.conf --daemonize no --bind 127.0.0.1

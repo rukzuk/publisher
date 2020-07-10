@@ -1,0 +1,26 @@
+# Tempfiles
+*.pyo
+*.pyc
+*.pid
+*~
+__pycache__
+
+# Virtualenv
+/env/
+
+# For jenkins
+/artifacts
+/reports
+
+# IntelliJ
+*.iml
+.idea/
+
+# Build
+/wheelhouse/
+/wheelhouse.tar.gz
+/static/
+/static.tar.gz
+
+# dev settings
+settings-dev.ini
