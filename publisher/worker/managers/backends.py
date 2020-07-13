@@ -106,16 +106,19 @@ class FTPUploadBackEnd(ConnectionBackEnd):
 
     def __init__(self,
                  host, username, password, basedir, port=21,
-                 permission_map={}):
+                 permission_map={}, ssl=False):
         self.host = host
         self.username = username
         self.password = password
         self.basedir = basedir
         self.port = port if port else 21
         self.permission_map = permission_map
-        # TODO: make FTP / FTPS switchable?
-        #self._ftp = ftplib.FTP()
-        self._ftp = ftplib.FTP_TLS()
+        self.ssl = ssl
+        # FTP or FTPS (with TLS/SSL)
+        if ssl:
+            self._ftp = ftplib.FTP_TLS()
+        else:
+            self._ftp = ftplib.FTP()
         self._ftp_folder = basedir
         self._type_i = True
 
@@ -123,7 +126,8 @@ class FTPUploadBackEnd(ConnectionBackEnd):
         logger.info("Connecting %s:%s" % (self.host, self.port))
         self._ftp.connect(self.host, self.port, 15)
         self._ftp.login(self.username, self.password)
-        self._ftp.prot_p()
+        if self.ssl:
+            self._ftp.prot_p()
         logger.debug("FTP-Server welcome message was: %s" % self._ftp.getwelcome())
         pwd = self._ftp.pwd()
         logger.debug("PWD of server '%s' is: %s" % (self.host, pwd))
@@ -332,11 +336,11 @@ class CachedFTPUploadBackEnd(FTPUploadBackEnd):
     creation on an initial publishing FTP job.
     """
 
-    def __init__(self, host, username, password, basedir, port=21, permission_map={}):
+    def __init__(self, host, username, password, basedir, port=21, permission_map={}, ssl=False):
         logger.debug("Init FTP back end with directory list cache")
         self._list_cache = {}
         FTPUploadBackEnd.__init__(self, host, username, password, basedir,
-                                  port=port, permission_map=permission_map)
+                                  port=port, permission_map=permission_map, ssl=ssl)
 
     def connect(self):
         self._invalidate_cache()

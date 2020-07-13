@@ -32,7 +32,8 @@ def init_manager(test_url, back_end_type, back_end_params, state=None):
         manager_back_end = backends.SFTPUploadBackEnd(
             back_end_params['host'], back_end_params['username'], back_end_params['password'],
             back_end_params['basedir'], back_end_params['port'], permission_map)
-    else:
+        return manifestbased.ManifestUploadManager(manager_back_end, test_url, state)
+    elif back_end_type == "ftp":
         logger.info("Initalising FTP back end")
         logger.debug("Back end parameters are: %s" % back_end_params)
         permission_map = {'r': back_end_params['chmod']['default'],
@@ -41,4 +42,16 @@ def init_manager(test_url, back_end_type, back_end_params, state=None):
         manager_back_end = backends.BoostedFTPUploadBackEnd(
             back_end_params['host'], back_end_params['username'], back_end_params['password'],
             back_end_params['basedir'], back_end_params['port'], permission_map)
-    return manifestbased.ManifestUploadManager(manager_back_end, test_url, state)
+        return manifestbased.ManifestUploadManager(manager_back_end, test_url, state)
+    elif back_end_type == "ftps":
+        logger.info("Initalising FTPS back end")
+        logger.debug("Back end parameters are: %s" % back_end_params)
+        permission_map = {'r': back_end_params['chmod']['default'],
+                          'w': back_end_params['chmod']['writeable'],
+                          'c': back_end_params['chmod']['writeable']}
+        manager_back_end = backends.BoostedFTPUploadBackEnd(
+            back_end_params['host'], back_end_params['username'], back_end_params['password'],
+            back_end_params['basedir'], back_end_params['port'], permission_map, ssl=True)
+        return manifestbased.ManifestUploadManager(manager_back_end, test_url, state)
+    else:
+        logger.info("Unknown back_end_type: %s" % back_end_type)
