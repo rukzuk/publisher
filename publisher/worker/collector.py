@@ -34,17 +34,16 @@ class ZIPCollector:
 
     def _downloadData(self, url):
         """
-        Downloads the related content/data from the publisher instance and
-        stores it in memory.
+        Downloads the related content/data from the publisher instance
 
         Returns the file object of the download file
         """
         logger.debug("Downloading file from: %s" % url)
         with self._open_url(url) as url_file:
-            mem_puffer = tempfile.SpooledTemporaryFile()
-            mem_puffer.write(url_file.read())
-            mem_puffer.seek(0)
-            return mem_puffer
+            temp_file = tempfile.TemporaryFile()
+            temp_file.write(url_file.read())
+            temp_file.seek(0)
+            return temp_file
 
     def _validateData(self, zdata):
         """
